@@ -1,5 +1,7 @@
 package com.yenaworld.rotto;
 
+import java.util.List;
+
 import com.yenaworld.rotto.vo.NumberVo;
 
 /**
@@ -8,14 +10,24 @@ import com.yenaworld.rotto.vo.NumberVo;
  */
 public class App {
     public static void main(String[] args) {
-        
-        NumberVo num = new NumberVo();
-        testNumberVo(num);
-        
-        System.out.println("Hello World!" + num.getBonus());
+
+        ExcelReader excelReader = new ExcelReader();
+
+        System.out.println("*****xls*****");
+        List<NumberVo> xlsList = excelReader.xlsToNumberVoList("C:\\excel\\test.xls");
+        printList(xlsList);
+
+        System.out.println("*****xlsx*****");
+        List<NumberVo> xlsxList = excelReader.xlsToNumberVoList("C:\\excel\\test.xlsx");
+        printList(xlsxList);
     }
-    
-    private static void testNumberVo(NumberVo num){
-        num.setBonus(12);
+
+    public static void printList(List<NumberVo> list) {
+        NumberVo vo;
+        
+        for (int i = 0; i < list.size(); i++) {
+            vo = list.get(i);
+            System.out.println(vo.toString());
+        }
     }
 }
