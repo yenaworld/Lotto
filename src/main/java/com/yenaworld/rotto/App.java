@@ -13,13 +13,14 @@ public class App {
 
         ExcelReader excelReader = new ExcelReader();
 
-        System.out.println("*****xls*****");
-        List<NumberVo> xlsList = excelReader.xlsToNumberVoList("C:\\excel\\test.xls");
-        printList(xlsList);
+//        System.out.println("*****xls*****");
+//        List<NumberVo> xlsList = excelReader.xlsToNumberVoList("C:\\Users\\NM11603074\\Desktop\\lotto.xlsx");
+//        printList(xlsList);
 
-        System.out.println("*****xlsx*****");
-        List<NumberVo> xlsxList = excelReader.xlsToNumberVoList("C:\\excel\\test.xlsx");
-        printList(xlsxList);
+        System.out.println("* start *");
+        List<NumberVo> xlsxList = excelReader.xlsxToNumberVoList("C:\\Users\\NM11603074\\Desktop\\lotto.xlsx");
+        System.out.println("* end *");
+//        printList(xlsxList);
     }
 
     public static void printList(List<NumberVo> list) {
