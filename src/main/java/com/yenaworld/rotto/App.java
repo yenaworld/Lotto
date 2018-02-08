@@ -1,5 +1,6 @@
 package com.yenaworld.rotto;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.yenaworld.rotto.vo.NumberVo;
@@ -9,7 +10,7 @@ import com.yenaworld.rotto.vo.NumberVo;
  *
  */
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         ExcelReader excelReader = new ExcelReader();
 
@@ -19,10 +20,24 @@ public class App {
 
         System.out.println("* start *");
         List<NumberVo> xlsxList = excelReader.xlsxToNumberVoList("C:\\Users\\NM11603074\\Desktop\\lotto.xlsx");
+        sendInflux(xlsxList);
+        
         System.out.println("* end *");
-        printList(xlsxList);
     }
     
+    public static void sendInflux(List<NumberVo> xlsxList){
+        try {
+            InfluxdbController.setUp("http://10.107.95.39:8086", "admin", "admin");
+            
+            for (NumberVo vo : xlsxList) {
+                InfluxdbController.sendInflux("test_2s_tag_number", vo);
+                Thread.sleep(2000);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     public static void printList(List<NumberVo> list) {
         int[] numberArray = new int[46];

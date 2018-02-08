@@ -24,7 +24,6 @@ public class ExcelReader {
 
     @SuppressWarnings("resource")
     public List<NumberVo> xlsToNumberVoList(String filePath) {
-        // 반환할 객체를 생성
         List<NumberVo> list = new ArrayList<NumberVo>();
         FileInputStream fis = null;
         HSSFWorkbook workbook = null;
@@ -38,20 +37,16 @@ public class ExcelReader {
             HSSFCell curCell;
             NumberVo vo;
 
-            // Sheet 탐색 for문
             for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
                 curSheet = workbook.getSheetAt(sheetIndex);
                 for (int rowIndex = 0; rowIndex < curSheet.getPhysicalNumberOfRows(); rowIndex++) {
-                    // row 0은 헤더정보이기 때문에 무시
                     if (rowIndex != 0) {
-                        // 현재 row 반환
                         curRow = curSheet.getRow(rowIndex);
                         vo = new NumberVo();
 
                         // row의 첫번째 cell값이 비어있지 않은 경우 만 cell탐색
                         if (!"".equals(curRow.getCell(0).getStringCellValue())) {
 
-                            // cell 탐색 for 문
                             for (int cellIndex = 0; cellIndex < curRow.getPhysicalNumberOfCells(); cellIndex++) {
                                 curCell = curRow.getCell(cellIndex);
                                 setVo(vo, cellIndex, getCellValue(curCell));
@@ -90,44 +85,34 @@ public class ExcelReader {
      * @return
      */
     public List<NumberVo> xlsxToNumberVoList(String filePath) {
-        // 반환할 객체를 생성
         List<NumberVo> list = new ArrayList<NumberVo>();
-
         FileInputStream fis = null;
         XSSFWorkbook workbook = null;
 
         try {
-
             fis = new FileInputStream(filePath);
-            // HSSFWorkbook은 엑셀파일 전체 내용을 담고 있는 객체
             workbook = new XSSFWorkbook(fis);
 
-            // 탐색에 사용할 Sheet, Row, Cell 객체
             XSSFSheet curSheet;
             XSSFRow curRow;
             XSSFCell curCell;
             NumberVo vo;
 
-            // Sheet 탐색 for문
             System.out.println("workbook.getNumberOfSheets(): " + workbook.getNumberOfSheets());
             for (int sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
-                // 현재 Sheet 반환
                 curSheet = workbook.getSheetAt(sheetIndex);
-                // row 탐색 for문
                 System.out.println("curSheet.getPhysicalNumberOfRows() : " + curSheet.getPhysicalNumberOfRows());
                 for (int rowIndex = 0; rowIndex < curSheet.getPhysicalNumberOfRows(); rowIndex++) {
                     // row 0은 헤더정보이기 때문에 무시
                     if (rowIndex != 0) {
-                        // 현재 row 반환
                         curRow = curSheet.getRow(rowIndex);
                         vo = new NumberVo();
 
                         for (int cellIndex = 0; cellIndex < curRow.getPhysicalNumberOfCells(); cellIndex++) {
                             curCell = curRow.getCell(cellIndex);
                             if (curCell != null)
-                                setVo(vo, cellIndex, getCellValueString(curCell));
+                                setVo(vo, cellIndex, getCellValue(curCell));
                         }
-                        // cell 탐색 이후 vo 추가
                         list.add(vo);
                     }
                 }
@@ -155,34 +140,7 @@ public class ExcelReader {
         return list;
     }
 
-    private int getCellValue(XSSFCell curCell) {
-        int value;
-
-        switch (curCell.getCellType()) {
-            case HSSFCell.CELL_TYPE_FORMULA:
-                value = Integer.parseInt(curCell.getCellFormula());
-                break;
-            case HSSFCell.CELL_TYPE_NUMERIC:
-                value = (int) curCell.getNumericCellValue();
-                break;
-            case HSSFCell.CELL_TYPE_STRING:
-                value = Integer.parseInt(curCell.getStringCellValue());
-                break;
-            case HSSFCell.CELL_TYPE_BLANK:
-                value = Integer.parseInt(curCell.getBooleanCellValue() + "");
-                break;
-            case HSSFCell.CELL_TYPE_ERROR:
-                value = Integer.parseInt(curCell.getErrorCellValue() + "");
-                break;
-            default:
-                value = 0;
-                break;
-        }
-
-        return value;
-    }
-
-    private String getCellValueString(XSSFCell curCell) {
+    private String getCellValue(XSSFCell curCell) {
         String value;
 
         switch (curCell.getCellType()) {
@@ -196,7 +154,6 @@ public class ExcelReader {
                 } else {
                     value = curCell.getNumericCellValue() + "";
                 }
-//                value = curCell.getNumericCellValue() + "";
                 break;
             case XSSFCell.CELL_TYPE_STRING:
                 value = curCell.getStringCellValue();
@@ -214,28 +171,33 @@ public class ExcelReader {
 
         return value;
     }
-
-    private int getCellValue(HSSFCell curCell) {
-        int value;
+    
+    private String getCellValue(HSSFCell curCell) {
+        String value;
 
         switch (curCell.getCellType()) {
             case HSSFCell.CELL_TYPE_FORMULA:
-                value = Integer.parseInt(curCell.getCellFormula());
+                value = curCell.getCellFormula();
                 break;
             case HSSFCell.CELL_TYPE_NUMERIC:
-                value = Integer.parseInt(curCell.getNumericCellValue() + "");
+                if (DateUtil.isCellDateFormatted(curCell)) {
+                    Date date = curCell.getDateCellValue();
+                    value = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                } else {
+                    value = curCell.getNumericCellValue() + "";
+                }
                 break;
             case HSSFCell.CELL_TYPE_STRING:
-                value = Integer.parseInt(curCell.getStringCellValue());
+                value = curCell.getStringCellValue();
                 break;
             case HSSFCell.CELL_TYPE_BLANK:
-                value = Integer.parseInt(curCell.getBooleanCellValue() + "");
+                value = curCell.getBooleanCellValue() + "";
                 break;
             case HSSFCell.CELL_TYPE_ERROR:
-                value = Integer.parseInt(curCell.getErrorCellValue() + "");
+                value = curCell.getErrorCellValue() + "";
                 break;
             default:
-                value = 0;
+                value = "";
                 break;
         }
 
@@ -274,37 +236,6 @@ public class ExcelReader {
                 break;
             case 8:
                 vo.setDate(value);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void setVo(NumberVo vo, int cellIndex, int value) {
-        switch (cellIndex) {
-            case 0:
-                vo.setIndex(value);
-                break;
-            case 1:
-                vo.setOne(value);
-                break;
-            case 2:
-                vo.setTwo(value);
-                break;
-            case 3:
-                vo.setThree(value);
-                break;
-            case 4:
-                vo.setFour(value);
-                break;
-            case 5:
-                vo.setFive(value);
-                break;
-            case 6:
-                vo.setSix(value);
-                break;
-            case 7:
-                vo.setBonus(value);
                 break;
             default:
                 break;
