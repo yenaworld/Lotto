@@ -107,10 +107,12 @@ public class ExcelReader {
             NumberVo vo;
 
             // Sheet 탐색 for문
-            for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+            System.out.println("workbook.getNumberOfSheets(): " + workbook.getNumberOfSheets());
+            for (int sheetIndex = 0; sheetIndex < 1; sheetIndex++) {
                 // 현재 Sheet 반환
                 curSheet = workbook.getSheetAt(sheetIndex);
                 // row 탐색 for문
+                System.out.println("curSheet.getPhysicalNumberOfRows() : " + curSheet.getPhysicalNumberOfRows());
                 for (int rowIndex = 0; rowIndex < curSheet.getPhysicalNumberOfRows(); rowIndex++) {
                     // row 0은 헤더정보이기 때문에 무시
                     if (rowIndex != 0) {
@@ -118,24 +120,19 @@ public class ExcelReader {
                         curRow = curSheet.getRow(rowIndex);
                         vo = new NumberVo();
 
-                        // row의 첫번째 cell값이 비어있지 않은 경우 만 cell탐색
-                        if (!"".equals(curRow.getCell(0).getStringCellValue())) {
-
-                            // cell 탐색 for 문
-                            for (int cellIndex = 0; cellIndex < curRow.getPhysicalNumberOfCells(); cellIndex++) {
-                                curCell = curRow.getCell(cellIndex);
-                                setVo(vo, cellIndex, getCellValue(curCell));
-                            }
-                            // cell 탐색 이후 vo 추가
-                            list.add(vo);
+                        for (int cellIndex = 0; cellIndex < curRow.getPhysicalNumberOfCells(); cellIndex++) {
+                            curCell = curRow.getCell(cellIndex);
+                            if(curCell != null) setVo(vo, cellIndex, getCellValue(curCell));
                         }
+                        // cell 탐색 이후 vo 추가
+                        list.add(vo);
                     }
                 }
             }
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
 
@@ -163,7 +160,7 @@ public class ExcelReader {
                 value = Integer.parseInt(curCell.getCellFormula());
                 break;
             case HSSFCell.CELL_TYPE_NUMERIC:
-                value = Integer.parseInt(curCell.getNumericCellValue() + "");
+                value = (int) curCell.getNumericCellValue();
                 break;
             case HSSFCell.CELL_TYPE_STRING:
                 value = Integer.parseInt(curCell.getStringCellValue());
