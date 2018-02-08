@@ -3,14 +3,16 @@ package com.yenaworld.rotto;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -122,7 +124,8 @@ public class ExcelReader {
 
                         for (int cellIndex = 0; cellIndex < curRow.getPhysicalNumberOfCells(); cellIndex++) {
                             curCell = curRow.getCell(cellIndex);
-                            if(curCell != null) setVo(vo, cellIndex, getCellValue(curCell));
+                            if (curCell != null)
+                                setVo(vo, cellIndex, getCellValueString(curCell));
                         }
                         // cell 탐색 이후 vo 추가
                         list.add(vo);
@@ -179,6 +182,39 @@ public class ExcelReader {
         return value;
     }
 
+    private String getCellValueString(XSSFCell curCell) {
+        String value;
+
+        switch (curCell.getCellType()) {
+            case XSSFCell.CELL_TYPE_FORMULA:
+                value = curCell.getCellFormula();
+                break;
+            case XSSFCell.CELL_TYPE_NUMERIC:
+                if (DateUtil.isCellDateFormatted(curCell)) {
+                    Date date = curCell.getDateCellValue();
+                    value = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                } else {
+                    value = curCell.getNumericCellValue() + "";
+                }
+//                value = curCell.getNumericCellValue() + "";
+                break;
+            case XSSFCell.CELL_TYPE_STRING:
+                value = curCell.getStringCellValue();
+                break;
+            case XSSFCell.CELL_TYPE_BLANK:
+                value = curCell.getBooleanCellValue() + "";
+                break;
+            case XSSFCell.CELL_TYPE_ERROR:
+                value = curCell.getErrorCellValue() + "";
+                break;
+            default:
+                value = "";
+                break;
+        }
+
+        return value;
+    }
+
     private int getCellValue(HSSFCell curCell) {
         int value;
 
@@ -204,6 +240,44 @@ public class ExcelReader {
         }
 
         return value;
+    }
+
+    private void setVo(NumberVo vo, int cellIndex, String value) {
+        int valueInt = 0;
+        if (cellIndex < 8)
+            valueInt = (int) Double.parseDouble(value);
+
+        switch (cellIndex) {
+            case 0:
+                vo.setIndex(valueInt);
+                break;
+            case 1:
+                vo.setOne(valueInt);
+                break;
+            case 2:
+                vo.setTwo(valueInt);
+                break;
+            case 3:
+                vo.setThree(valueInt);
+                break;
+            case 4:
+                vo.setFour(valueInt);
+                break;
+            case 5:
+                vo.setFive(valueInt);
+                break;
+            case 6:
+                vo.setSix(valueInt);
+                break;
+            case 7:
+                vo.setBonus(valueInt);
+                break;
+            case 8:
+                vo.setDate(value);
+                break;
+            default:
+                break;
+        }
     }
 
     private void setVo(NumberVo vo, int cellIndex, int value) {

@@ -10,6 +10,7 @@ public class NumberVo {
     private int five;
     private int six;
     private int bonus;
+    private String date;
     
     public int getIndex() {
         return index;
@@ -58,6 +59,12 @@ public class NumberVo {
     }
     public void setBonus(int bonus) {
         this.bonus = bonus;
+    }
+    public String getDate() {
+        return date;
+    }
+    public void setDate(String date) {
+        this.date = date;
     }
     
     

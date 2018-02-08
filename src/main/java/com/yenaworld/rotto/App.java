@@ -20,15 +20,26 @@ public class App {
         System.out.println("* start *");
         List<NumberVo> xlsxList = excelReader.xlsxToNumberVoList("C:\\Users\\NM11603074\\Desktop\\lotto.xlsx");
         System.out.println("* end *");
-//        printList(xlsxList);
+        printList(xlsxList);
     }
+    
 
     public static void printList(List<NumberVo> list) {
-        NumberVo vo;
+        int[] numberArray = new int[46];
         
-        for (int i = 0; i < list.size(); i++) {
-            vo = list.get(i);
-            System.out.println(vo.toString());
+        
+        for (NumberVo vo : list) {
+            numberArray[vo.getOne()]++;
+            numberArray[vo.getTwo()]++;
+            numberArray[vo.getThree()]++;
+            numberArray[vo.getFour()]++;
+            numberArray[vo.getFive()]++;
+            numberArray[vo.getSix()]++;
+            numberArray[vo.getBonus()]++;
+        }
+        
+        for(int i: numberArray){
+            System.out.println(i);
         }
     }
 }
