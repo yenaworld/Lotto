@@ -72,6 +72,37 @@ public class InfluxdbController {
 
     }
     
+    public static void sendInfluxTagByNumber(String name, NumberVo vo) {
+        BatchPoints batchPoints = BatchPoints.database("testTuple").tag("async", "true").retentionPolicy("default").build();
+        
+        String[] date = vo.getDate().split("-");
+        
+        Point point1 = Point.measurement(name).tag("year", date[0]).tag("month", date[1]).tag("date", date[2])
+                .tag("Number", String.valueOf(vo.getOne())).addField("value", 1).build();
+        Point point2 = Point.measurement(name).tag("year", date[0]).tag("month", date[1]).tag("date", date[2])
+                .tag("Number", String.valueOf(vo.getTwo())).addField("value", 1).build();
+        Point point3 = Point.measurement(name).tag("year", date[0]).tag("month", date[1]).tag("date", date[2])
+                .tag("Number", String.valueOf(vo.getThree())).addField("value", 1).build();
+        Point point4 = Point.measurement(name).tag("year", date[0]).tag("month", date[1]).tag("date", date[2])
+                .tag("Number", String.valueOf(vo.getFour())).addField("value", 1).build();
+        Point point5 = Point.measurement(name).tag("year", date[0]).tag("month", date[1]).tag("date", date[2])
+                .tag("Number", String.valueOf(vo.getFive())).addField("value", 1).build();
+        Point point6 = Point.measurement(name).tag("year", date[0]).tag("month", date[1]).tag("date", date[2])
+                .tag("Number", String.valueOf(vo.getSix())).addField("value", 1).build();
+        Point point7 = Point.measurement(name).tag("year", date[0]).tag("month", date[1]).tag("date", date[2])
+                .tag("Number", String.valueOf(vo.getBonus())).addField("value", 1).build();
+        batchPoints.point(point1);
+        batchPoints.point(point2);
+        batchPoints.point(point3);
+        batchPoints.point(point4);
+        batchPoints.point(point5);
+        batchPoints.point(point6);
+        batchPoints.point(point7);
+
+        influxDB.write(batchPoints);
+
+    }
+    
     public static void sendInfluxByNumber(String name, NumberVo vo) {
         BatchPoints batchPoints = BatchPoints.database("testTuple").tag("async", "true").retentionPolicy("default").build();
         

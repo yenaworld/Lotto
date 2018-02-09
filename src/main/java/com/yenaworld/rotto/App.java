@@ -30,7 +30,7 @@ public class App {
             InfluxdbController.setUp("http://10.107.95.39:8086", "admin", "admin");
             
             for (NumberVo vo : xlsxList) {
-                InfluxdbController.sendInflux("test_2s_tag_number", vo);
+                InfluxdbController.sendInfluxTagByNumber("test_2s_tag_number_3", vo);
                 Thread.sleep(2000);
             }
         } catch (Exception e) {
